@@ -1,10 +1,49 @@
 ﻿@page
+@using OnePunch.Models
+@inject SignInManager<OnePunchUser> SignInManager
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Welcome @User.Identity.Name</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<div class="text-center">
+    <a button type="submit" asp-page="./Punch" class="btn btn-primary">Punch</a>
+</div>
+<div>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <p>
+            Last Punch: @Model.LastPunch
+        </p>
+    }
+
+</div>
+<div class="row">
+    <table class="table table-bordered table-hover" id="tblPunches">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Role</th>
+                <th>In</th>
+                <th>Out</th>
+                <th>Day</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var punch in Model.Punches)
+            {
+                <tr>
+                    <td>@punch.Id</td>
+                    <td>@punch.AspNetUserRoleName</td>
+                    <td>@punch.ClockIn</td>
+                    <td>@punch.ClockOut</td>
+                    <td>@punch.DayOfWeek</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
