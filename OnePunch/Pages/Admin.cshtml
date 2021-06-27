@@ -6,7 +6,11 @@
 }
 
 <h1>Admin</h1>
-
+<form method="post">
+    <div>
+        <button type="submit" class="btn btn-primary" asp-page-handler="Download">Download</button>
+    </div>
+</form>
 <p>
     <a asp-page="Create">Create New</a>
 </p>
@@ -14,43 +18,43 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].ClockIn)
+                @Html.DisplayNameFor(model => model.Punches[0].ClockIn)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].ClockOut)
+                @Html.DisplayNameFor(model => model.Punches[0].ClockOut)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].IsClockedIn)
+                @Html.DisplayNameFor(model => model.Punches[0].IsClockedIn)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].Latitude)
+                @Html.DisplayNameFor(model => model.Punches[0].Latitude)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].Longitude)
+                @Html.DisplayNameFor(model => model.Punches[0].Longitude)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].AspNetUserId)
+                @Html.DisplayNameFor(model => model.Punches[0].AspNetUserId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].AspNetUserRoleName)
+                @Html.DisplayNameFor(model => model.Punches[0].AspNetUserRoleName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].CreatedAt)
+                @Html.DisplayNameFor(model => model.Punches[0].CreatedAt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].ModifiedAt)
+                @Html.DisplayNameFor(model => model.Punches[0].ModifiedAt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].DayOfWeek)
+                @Html.DisplayNameFor(model => model.Punches[0].DayOfWeek)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Punch[0].LastPunch)
+                @Html.DisplayNameFor(model => model.Punches[0].LastPunch)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Punch) {
+@foreach (var item in Model.Punches) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ClockIn)

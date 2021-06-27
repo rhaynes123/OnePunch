@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,11 +20,25 @@ namespace OnePunch.Pages
             _context = context;
         }
 
-        public IList<Punch> Punch { get;set; }
+        public IList<Punch> Punches { get;set; }
 
-        public async Task OnGetAsync()
+        public void OnGet()
         {
-            Punch = await _context.Punches.ToListAsync();
+            Punches =  _context.GetPunches().ToList();
+        }
+
+        public async Task<FileResult> OnPostDownload()
+        {
+            StringBuilder FileStringBuilder = new ();
+            var data = await _context.Punches.ToListAsync();
+            FileStringBuilder.Append("Punch #, UserId, Role, Day Of Week,Clock In, Clock Out\n");
+            foreach ( var line in data)
+            {
+                FileStringBuilder.Append($"{line.Id},{line.AspNetUserId},{line.AspNetUserRoleName},{line.DayOfWeek},{line.ClockIn},{line.ClockOut}");
+                FileStringBuilder.Append("\r\n");
+            }
+
+            return File(Encoding.ASCII.GetBytes(FileStringBuilder.ToString()),"text/csv", $"DownLoads_{DateTime.Now.ToShortTimeString()}.csv");
         }
     }
 }

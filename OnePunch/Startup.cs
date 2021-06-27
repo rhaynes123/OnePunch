@@ -40,6 +40,17 @@ namespace OnePunch
                     .EnableDetailedErrors()
                     .EnableSensitiveDataLogging());
             }
+            else
+            {
+                services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseMySql(
+                    Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 22)),
+                    options => options.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null)
+                    ));
+            }
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<OnePunchUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -49,7 +60,10 @@ namespace OnePunch
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext db)
         {
-            db.Database.EnsureCreated();
+            if(!db.Database.CanConnect())
+            {
+                db.Database.EnsureCreated();
+            }
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnePunch.Models;
@@ -37,7 +38,21 @@ namespace OnePunch.Data
             });
         }
 
-        public DateTime GetLastPunch(string id) => Punches.OrderByDescending(p => p.Id).FirstOrDefault(p => p.AspNetUserId == id).LastPunch;
+        public DateTime GetLastPunch(string id)
+        {
+            try
+            {
+                return Punches.OrderByDescending(p => p.Id).FirstOrDefault(p => p.AspNetUserId == id).LastPunch;
+            }
+            catch (NullReferenceException)
+            {
+                throw new NullReferenceException("Null referenced raised please ensure the userid provided is valid");
+            }
+        }
 
+        public IEnumerable< Punch> GetPunches()
+        {
+            return Punches.FromSqlRaw(" CALL GetAllPunches ();").AsEnumerable();
+        }
     }
 }

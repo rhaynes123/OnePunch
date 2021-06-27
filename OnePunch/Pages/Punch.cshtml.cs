@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OnePunch.Data;
 using OnePunch.Models;
 
@@ -17,12 +18,15 @@ namespace OnePunch.Pages
     [Authorize]
     public class PunchModel : PageModel
     {
+        private readonly ILogger<PunchModel> _logger;
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PunchModel(ApplicationDbContext context
+        public PunchModel(ILogger<PunchModel> logger
+            ,ApplicationDbContext context
             , RoleManager<IdentityRole> roleManager)
         {
+            _logger = logger;
             _context = context;
             _roleManager = roleManager;
         }
@@ -41,25 +45,34 @@ namespace OnePunch.Pages
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return Page();
-            }
-            Punch openPunch = await _context.Punches.FirstOrDefaultAsync(p => p.AspNetUserId == Punch.AspNetUserId && p.IsClockedIn);
-            if (openPunch == null)
-            {
-                _context.Punches.Add(Punch);
-            }
-            else
-            {
-                Punch = openPunch;
-                Punch.ClockOut = DateTime.UtcNow;
-                Punch.IsClockedIn = false;
-                _context.Attach(Punch).State = EntityState.Modified;
-            }
-            await _context.SaveChangesAsync();
+                if (!ModelState.IsValid)
+                {
+                    return Page();
+                }
+                Punch openPunch = await _context.Punches.FirstOrDefaultAsync(p => p.AspNetUserId == Punch.AspNetUserId && p.IsClockedIn);
+                if (openPunch == null)
+                {
+                    _context.Punches.Add(Punch);
+                }
+                else
+                {
+                    Punch = openPunch;
+                    Punch.ClockOut = DateTime.UtcNow;
+                    Punch.IsClockedIn = false;
+                    _context.Attach(Punch).State = EntityState.Modified;
+                }
+                await _context.SaveChangesAsync();
 
-            return RedirectToPage("./Index");
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Index Raised a Critical Exception: {ex.Message}");
+                return RedirectToPage("./Shared/Whoops");
+            }
+            
         }
     }
 }
