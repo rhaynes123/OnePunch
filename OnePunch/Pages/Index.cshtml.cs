@@ -28,7 +28,7 @@ namespace OnePunch.Pages
         [BindProperty]
         public IEnumerable<Punch> Punches { get; set; }
         [BindProperty]
-        public DateTime LastPunch { get; set; }
+        public DateTime? LastPunch { get; set; }
         [BindProperty]
         public string UserId { get; private set; }
         public async Task<IActionResult> OnGetAsync()

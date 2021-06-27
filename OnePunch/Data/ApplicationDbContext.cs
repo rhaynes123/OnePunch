@@ -38,15 +38,15 @@ namespace OnePunch.Data
             });
         }
 
-        public DateTime GetLastPunch(string id)
+        public DateTime? GetLastPunch(string id)
         {
             try
             {
-                return Punches.OrderByDescending(p => p.Id).FirstOrDefault(p => p.AspNetUserId == id).LastPunch;
+                return Punches.OrderByDescending(p => p.Id).FirstOrDefault(p => p.AspNetUserId == id)?.LastPunch;
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
-                throw new NullReferenceException("Null referenced raised please ensure the userid provided is valid");
+                throw new Exception("Unexpected exception referenced raised please ensure the userid provided is valid");
             }
         }
 
